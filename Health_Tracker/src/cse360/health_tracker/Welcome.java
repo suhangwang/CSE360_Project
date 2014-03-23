@@ -21,6 +21,10 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class Welcome {
 
@@ -32,6 +36,8 @@ public class Welcome {
 	private JLabel lblPassword;
 	private JTextField txtEnterUsernameHere;
 	private JButton btnCreateAccount;
+	private Scanner input;
+	private int userID;
 
 	/**
 	 * Launch the application.
@@ -53,13 +59,19 @@ public class Welcome {
 	 * Create the application.
 	 */
 	public Welcome() {
-		initialize();
+		try {
+			initialize();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws IOException 
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		frmHealthTracker = new JFrame();
 		frmHealthTracker.setBackground(Color.WHITE);
 		frmHealthTracker.setResizable(false);
@@ -69,9 +81,12 @@ public class Welcome {
 		frmHealthTracker.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHealthTracker.getContentPane().setLayout(null);
 		
+		// added JLabel for logo image
 		JLabel lblNewLabel = new JLabel("New label");
 		lblNewLabel.setBounds(0, 0, frmHealthTracker.getHeight(), frmHealthTracker.getHeight());
-		ImageIcon icon = new ImageIcon("/home/suhang/workspace/Health_Tracker/img/logo.jpg");
+		File directory = new File(".");
+		final String dir = directory.getCanonicalPath();
+		ImageIcon icon = new ImageIcon(dir+"/img/logo.jpg");
 		Image temp = icon.getImage().getScaledInstance(lblNewLabel.getWidth(), lblNewLabel.getHeight(), icon.getImage().SCALE_DEFAULT);
 		icon = new ImageIcon(temp);
 		lblNewLabel.setIcon(icon);
@@ -119,6 +134,7 @@ public class Welcome {
 		pwdEnterPasswordHere.setBounds(lblNewLabel.getWidth()+10+lblUsername.getWidth(), 296, 145, 20);
 		frmHealthTracker.getContentPane().add(pwdEnterPasswordHere);
 		
+		// submit username and password
 		JButton btnNewButton = new JButton("Submit");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -126,12 +142,46 @@ public class Welcome {
 				String username = txtEnterUsernameHere.getText();
 				String password = pwdEnterPasswordHere.getText();
 				System.out.println(username + " " + password);
-				//TODO: call check password
+				// check if username and password are valid
+				/*boolean userValid = false;
+				try {
+					input = new Scanner(new File(dir+"/passwordList.txt"));
+					while(input.hasNextLine() && !userValid)
+					{
+						if(username.compareTo(input.next())==0 &&
+							password.compareTo(input.next())==0)
+						{
+							userValid = true;
+							input.next();
+							input.next();
+							userID = input.nextInt();
+						}
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}*/
+				// if valid call main screen
+				if(MySQLDB.userValid(username, password))
+				{
+					//call main screen
+					System.out.println("find");
+					//TODO //////////////////////////////////////////////////////////////////
+				}
+				else
+				{
+					// pop up not correct
+					try {
+						new ErrorMessage("invalid username or passwrod");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		});
 		btnNewButton.setBounds(lblNewLabel.getWidth()+160+lblUsername.getWidth(), 296, 90, 20);
 		frmHealthTracker.getContentPane().add(btnNewButton);
 		
+		// forget password
 		JLabel lblForgetPassword = new JLabel("Forget password?");
 		lblForgetPassword.setBounds(lblNewLabel.getWidth()+10, 326, 137, 15);
 		frmHealthTracker.getContentPane().add(lblForgetPassword);

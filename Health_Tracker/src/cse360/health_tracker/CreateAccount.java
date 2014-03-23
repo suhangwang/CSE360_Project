@@ -16,16 +16,17 @@ import java.awt.event.ActionEvent;
 public class CreateAccount {
 
 	private JFrame frmCreateAccount;
-	private JPasswordField passwordField;
+	//private JPasswordField passwordField;
 	private JTextField textUsername;
 	private JPasswordField passwordEnter;
 	private JPasswordField passwordVerify;
 	private JTextField textAnswer;
+	private JComboBox comboBox;
 
 	/**
 	 * Launch the application.
 	 */
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -36,7 +37,7 @@ public class CreateAccount {
 				}
 			}
 		});
-	}*/
+	}
 
 	/**
 	 * Create the application.
@@ -94,8 +95,8 @@ public class CreateAccount {
 		passwordVerify.setBounds(159, 129, 136, 19);
 		frmCreateAccount.getContentPane().add(passwordVerify);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"In which city were your born?", "What's your favorite pet?", "What's yhe last name of your first teacher?", "What's your favorite sports?"}));
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"", "In which city were your born?", "What's your favorite pet?", "What's yhe last name of your first teacher?", "What's your favorite sports?"}));
 		comboBox.setBounds(159, 159, 180, 19);
 		frmCreateAccount.getContentPane().add(comboBox);
 		
@@ -107,7 +108,28 @@ public class CreateAccount {
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frmCreateAccount.setVisible(false);
+				String username = textUsername.getText();
+				String password = passwordEnter.getText();
+				String reenterPassword = passwordVerify.getText();
+				String answer = textAnswer.getText();
+				int index = comboBox.getSelectedIndex();
+				System.out.println(index);
+				// username exists
+				if(username.compareTo("")==0)
+					new ErrorMessage("username cannot be blank");
+				else if(MySQLDB.userExist(username))
+					new ErrorMessage("username exists");
+				else if(password.compareTo(reenterPassword)!=0)
+					new ErrorMessage("password not match");
+				else if(index==0)
+					new ErrorMessage("please choose a question");
+				else if(answer.compareTo("")==0)
+					new ErrorMessage("answer cannot be blank");
+				else
+				{
+					MySQLDB.addNewUserInfo(username, password, index, answer);
+					frmCreateAccount.setVisible(false);
+				}
 			}
 		});
 		btnSubmit.setBounds(222, 264, 117, 20);
