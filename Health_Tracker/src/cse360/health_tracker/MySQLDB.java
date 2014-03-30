@@ -87,4 +87,42 @@ public class MySQLDB {
 			return true;
 		}
 	}
+	
+	public static boolean addNewPhysicalActivityRecord(String username, String password, String date,
+													   double cardioDou, double strengthDou, double workDou,
+													   double sleepDou, double recreationDou)
+	{
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String query = "insert into physicalActivity(username,password,date,cardio,strength,work,sleep,recreation) values(\""+
+							username+"\",\""+password+"\",\""+date+"\","+cardioDou+","+strengthDou+","+workDou+","+sleepDou+","+recreationDou+")";
+			System.out.println(query);
+			st.executeUpdate(query);
+			con.close();
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	public static boolean addNewHealthIndicatorRecord(String username, String password, String date,
+			   double pressureDou, double sugerDou, double rateDou,
+			   double temperatureDou, double weightDou)
+	{
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String query = "insert into physicalActivity(username,password,date,pressure,suger,rate,temperature,weight) values(\""+
+			username+"\",\""+password+"\",\""+date+"\","+pressureDou+","+sugerDou+","+rateDou+","+temperatureDou+","+weightDou+")";
+			System.out.println(query);
+			st.executeUpdate(query);
+			con.close();
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return true;
+	}
 }

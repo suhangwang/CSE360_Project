@@ -166,6 +166,14 @@ public class Welcome {
 					//call main screen
 					System.out.println("find");
 					//TODO //////////////////////////////////////////////////////////////////
+					try {
+						frmHealthTracker.setVisible(false);
+						AddRecord frameAddRecord = new AddRecord(username, password);
+						frameAddRecord.setVisible(true);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				else
 				{
