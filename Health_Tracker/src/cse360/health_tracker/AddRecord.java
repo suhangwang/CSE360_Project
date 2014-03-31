@@ -275,7 +275,7 @@ public class AddRecord extends JFrame {
 		btnSubmit.setBounds(277, 357, 97, 25);
 		contentPane.add(btnSubmit);
 		
-		JButton btnReset = new JButton("Reset");Enter Username Here
+		JButton btnReset = new JButton("Reset");
 		btnReset.setBounds(462, 357, 97, 25);
 		contentPane.add(btnReset);
 		
