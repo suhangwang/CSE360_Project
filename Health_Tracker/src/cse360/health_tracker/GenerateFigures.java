@@ -11,7 +11,10 @@ import java.text.SimpleDateFormat;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -27,52 +30,30 @@ import org.jfree.ui.*;
  */
 public class GenerateFigures {
 	
-	public static void main(String[] args) {
-		// 步骤1：创建CategoryDataset对象（准备数据）
-		TimeSeriesCollection dataset = MySQLDB.retrieveRecord("admin", "admin");
-		// 步骤2：根据Dataset 生成JFreeChart对象，以及做相应的设置
-		JFreeChart freeChart = createChart(dataset);
-		//JFreeChart freeChart = lineChart(dataset);
-		// 步骤3：将JFreeChart对象输出到文件，Servlet输出流等
-		saveAsFile(freeChart, "/home/suhang/git/CSE360_Project/Health_Tracker/img/LineChart.png", 300, 300);
-	}
-
-	// 创建TimeSeriesCollection对象
-	/*public static TimeSeriesCollection createDataset() {
-		TimeSeriesCollection lineDataset = new TimeSeriesCollection();
-		TimeSeries timeSeries = new TimeSeries("统计");
-		timeSeries.add(new Month(1, 2007), 11200);
-		timeSeries.add(new Month(2, 2007), 9000);
-		timeSeries.add(new Month(3, 2007), 6200);
-		timeSeries.add(new Month(4, 2007), 8200);
-		timeSeries.add(new Month(5, 2007), 8200);
-		timeSeries.add(new Month(6, 2007), 12200);
-		timeSeries.add(new Month(7, 2007), 13200);
-		timeSeries.add(new Month(8, 2007), 8300);
-		timeSeries.add(new Month(9, 2007), 12400);
-		timeSeries.add(new Month(10, 2007), 12500);
-		timeSeries.add(new Month(11, 2007), 13600);
-		timeSeries.add(new Month(12, 2007), 12500);
-		
-		TimeSeries timeSeries1 = new TimeSeries("统计1");
-		timeSeries1.add(new Month(1, 2007), 112001);
-		timeSeries1.add(new Month(2, 2007), 90001);
-		timeSeries1.add(new Month(3, 2007), 62001);
-		timeSeries1.add(new Month(4, 2007), 82001);
-		timeSeries1.add(new Month(5, 2007), 82001);
-		timeSeries1.add(new Month(6, 2007), 122001);
-		timeSeries1.add(new Month(7, 2007), 132001);
-		timeSeries1.add(new Month(8, 2007), 83001);
-		timeSeries1.add(new Month(9, 2007), 124001);
-		timeSeries1.add(new Month(10, 2007), 125001);
-		timeSeries1.add(new Month(11, 2007), 136001);
-		timeSeries1.add(new Month(12, 2007), 125001);
-		
-		lineDataset.addSeries(timeSeries);
-		lineDataset.addSeries(timeSeries1);
-		return lineDataset;
+	/*public static void main(String[] args) {
+		// get data from MySQL
+		GraphicalDataType data = MySQLDB.retrieveRecord_new("admin", "admin");
+		// create line chart and histogram
+		JFreeChart lineChart = createChart(data.getLineDataset());
+		JFreeChart histChart = createHistChart(data.getHistDataset());
+		// save image as file
+		saveAsFile(lineChart, "/home/suhang/git/CSE360_Project/Health_Tracker/img/LineChart.png", 300, 300);
+		saveAsFile(histChart, "/home/suhang/git/CSE360_Project/Health_Tracker/img/Histogram.png", 300, 300);
 	}*/
 
+	public static void generateFigures() throws IOException
+	{
+		GraphicalDataType data = MySQLDB.retrieveRecord_new("admin", "admin");
+		// create line chart and histogram
+		JFreeChart lineChart = createChart(data.getLineDataset());
+		JFreeChart histChart = createHistChart(data.getHistDataset());
+		// save image as file
+		File directory = new File(".");
+		final String dir = directory.getCanonicalPath();
+		saveAsFile(lineChart, dir+"/img/LineChart.png", 600, 360);
+		saveAsFile(histChart, dir+"/img/Histogram.png", 600, 360);
+	}
+	
 	public static JFreeChart lineChart(TimeSeriesCollection lineDataset)
 	{
 		JFreeChart lineChart = ChartFactory.createTimeSeriesChart(null, null, null, lineDataset);
@@ -80,16 +61,41 @@ public class GenerateFigures {
 		return lineChart;
 	}
 	
+	public static JFreeChart createHistChart(CategoryDataset histDataset)
+	{
+		//create theme  
+        StandardChartTheme standardChartTheme=new StandardChartTheme("CN");      
+        //set title font    
+        standardChartTheme.setExtraLargeFont(new Font("隶书",Font.BOLD,12));      
+        //set legend font   
+        standardChartTheme.setRegularFont(new Font("宋书",Font.PLAIN,10));      
+        //set axis font  
+        standardChartTheme.setLargeFont(new Font("宋书",Font.PLAIN,10));      
+        //use theme   
+        ChartFactory.setChartTheme(standardChartTheme);  
+        JFreeChart chart = ChartFactory.createBarChart3D(  
+                           "Histogram", // title
+                           "physical activity", // category
+                           "Hours", // y label 
+                            histDataset, // dataset 
+                            PlotOrientation.VERTICAL, // figure direction: horizontal or vertical
+                            true,  // legend
+                            false, // tooltips
+                            false  // URLs
+                            );  
+        return chart;
+	}
+	
 	// 根据CategoryDataset生成JFreeChart对象
 	public static JFreeChart createChart(TimeSeriesCollection lineDataset) {
 		JFreeChart jfreechart = ChartFactory.createTimeSeriesChart(
-				"Monthly Plot", 		// 标题
-				"Time", 		// categoryAxisLabel （category轴，横轴，X轴的标签）
-				"Hours", 	// valueAxisLabel（value轴，纵轴，Y轴的标签）
+				"Monthly Plot", 		// title
+				"Time", 		// categoryAxisLabel
+				"Hours", 	// valueAxisLabel
 				lineDataset,// dataset
 				true, 		// legend
 				true, 		// tooltips
-				false); 		// URLs
+				false); 		// URLs300, 300
 
 
 		// 配置字体（解决中文乱码的通用方法）
@@ -139,7 +145,7 @@ public class GenerateFigures {
 
 	// 保存为文件
 	public static void saveAsFile(JFreeChart chart, String outputPath,
-			int weight, int height) {
+			int width, int height) {
 		FileOutputStream out = null;
 		try {
 			File outFile = new File(outputPath);
@@ -147,9 +153,9 @@ public class GenerateFigures {
 				outFile.getParentFile().mkdirs();
 			}
 			out = new FileOutputStream(outputPath);
-			// 保存为PNG文件
-			ChartUtilities.writeChartAsPNG(out, chart, 600, 360);
-			// 保存为JPEG文件
+			// save as PNG file
+			ChartUtilities.writeChartAsPNG(out, chart, width, height);
+			// save as JPEG file
 		    //ChartUtilities.writeChartAsJPEG(out, chart, 500, 400);
 			out.flush();
 		} catch (FileNotFoundException e) {

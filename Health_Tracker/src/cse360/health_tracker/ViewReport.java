@@ -63,6 +63,9 @@ public class ViewReport {
 		frmViewReport.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmViewReport.getContentPane().setLayout(null);
 		
+		// generate the figures
+		GenerateFigures.generateFigures(); 
+		
 		JLabel lblLineChart = new JLabel("Line Chart");
 		lblLineChart.setBounds(0, 0, 600, frmViewReport.getHeight()/2);
 		File directory = new File(".");
@@ -75,7 +78,7 @@ public class ViewReport {
 		
 		JLabel lblHistogram = new JLabel("New label");
 		lblHistogram.setBounds(0, frmViewReport.getHeight()/2, 600, frmViewReport.getHeight()/2);
-		ImageIcon iconHistogram = new ImageIcon(dir+"/img/Histogram.jpg");
+		ImageIcon iconHistogram = new ImageIcon(dir+"/img/Histogram.png");
 		Image tempHistogram = iconHistogram.getImage().getScaledInstance(lblHistogram.getWidth(), lblHistogram.getHeight(), iconHistogram.getImage().SCALE_DEFAULT);
 		iconHistogram = new ImageIcon(tempHistogram);
 		lblHistogram.setIcon(iconHistogram);
@@ -112,5 +115,9 @@ public class ViewReport {
 		btnPrintToPrinter = new JButton("Print to printer");
 		btnPrintToPrinter.setBounds(674, 640, 147, 25);
 		frmViewReport.getContentPane().add(btnPrintToPrinter);
+		
+		JButton btnSwitchToWeekly_1 = new JButton("Switch to Weekly");
+		btnSwitchToWeekly_1.setBounds(677, 273, 117, 25);
+		frmViewReport.getContentPane().add(btnSwitchToWeekly_1);
 	}
 }

@@ -210,4 +210,92 @@ public class MySQLDB {
 		
 		return lineDataset;
 	}
+	
+	public static GraphicalDataType retrieveRecord_new(String username, String password)
+	{
+		GraphicalDataType graphicalData = new GraphicalDataType();
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String queryPhysical = "select * from physicalActivity where username = \"" + username + "\" and password = \"" + 
+									password + "\" order by date asc";
+			rs = st.executeQuery(queryPhysical);
+			
+			TimeSeries cardioSeries = new TimeSeries("cardio");
+			TimeSeries strengthSeries = new TimeSeries("strength");
+			TimeSeries workSeries = new TimeSeries("work");
+			TimeSeries sleepSeries = new TimeSeries("sleep");
+			TimeSeries recreationSeries = new TimeSeries("recreation");
+			
+			int year = 0, month = 0, curYear, curMonth, count = 0;
+			double cardio = 0, strength = 0, work = 0, sleep = 0, recreation = 0;
+			boolean firstTime = true;
+			while(rs.next())
+			{
+				/*Date date = rs.getDate(3);
+				curYear = date.getYear();
+				curMonth = date.getMonth();*/
+				String date1 = rs.getString(3);
+				String sp[] = date1.split("-");
+				curYear = Integer.parseInt(sp[0]);
+				curMonth = Integer.parseInt(sp[1]);
+				System.out.println(curYear+" "+curMonth);
+				if(year!=curYear || month!=curMonth)
+				{
+					if(firstTime == false)
+					{
+						System.out.println(new Month(month, year));
+						cardioSeries.add(new Month(month, year), cardio/count);
+						strengthSeries.add(new Month(month, year), strength/count);
+						workSeries.add(new Month(month, year), work/count);
+						sleepSeries.add(new Month(month, year), sleep/count);
+						recreationSeries.add(new Month(month, year), recreation/count);
+						graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+						graphicalData.addCategory(strength/count, new Month(month, year), "strength");
+						graphicalData.addCategory(work/count, new Month(month, year), "work");
+						graphicalData.addCategory(sleep/count, new Month(month, year), "sleep");
+						graphicalData.addCategory(recreation/count, new Month(month, year), "recreation");
+						//graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+					}
+					count = 0;
+					cardio = 0;
+					strength = 0;
+					work = 0;
+					sleep = 0;
+					recreation = 0;
+					year = curYear;
+					month = curMonth;
+					firstTime = false;
+				}
+				count = count + 1;
+				cardio = cardio + rs.getDouble(4);
+				strength = strength + rs.getDouble(5);
+				work = work + rs.getDouble(6);
+				sleep = sleep + rs.getDouble(7);
+				recreation = recreation + rs.getDouble(8);
+			}
+			System.out.println(month);
+			cardioSeries.add(new Month(month, year), cardio/count);
+			strengthSeries.add(new Month(month, year), strength/count);
+			workSeries.add(new Month(month, year), work/count);
+			sleepSeries.add(new Month(month, year), sleep/count);
+			recreationSeries.add(new Month(month, year), recreation/count);
+			graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+			graphicalData.addCategory(strength/count, new Month(month, year), "strength");
+			graphicalData.addCategory(work/count, new Month(month, year), "work");
+			graphicalData.addCategory(sleep/count, new Month(month, year), "sleep");
+			graphicalData.addCategory(recreation/count, new Month(month, year), "recreation");
+			
+			graphicalData.addLineChartTimeSeries(cardioSeries);
+			graphicalData.addLineChartTimeSeries(strengthSeries);
+			graphicalData.addLineChartTimeSeries(workSeries);
+			graphicalData.addLineChartTimeSeries(sleepSeries);
+			graphicalData.addLineChartTimeSeries(recreationSeries);
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return graphicalData;
+	}
 }

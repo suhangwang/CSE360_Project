@@ -20,14 +20,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
         //创建主题样式      
          StandardChartTheme standardChartTheme=new StandardChartTheme("CN");      
          //设置标题字体      
-         standardChartTheme.setExtraLargeFont(new Font("隶书",Font.BOLD,20));      
+         standardChartTheme.setExtraLargeFont(new Font("隶书",Font.BOLD,12));      
          //设置图例的字体      
-         standardChartTheme.setRegularFont(new Font("宋书",Font.PLAIN,15));      
+         standardChartTheme.setRegularFont(new Font("宋书",Font.PLAIN,10));      
          //设置轴向的字体      
-         standardChartTheme.setLargeFont(new Font("宋书",Font.PLAIN,15));      
+         standardChartTheme.setLargeFont(new Font("宋书",Font.PLAIN,10));      
          //应用主题样式      
          ChartFactory.setChartTheme(standardChartTheme);  
-         CategoryDataset dataset = getDataSet();  
+         CategoryDataset dataset = getDataSet2();  
          JFreeChart chart = ChartFactory.createBarChart3D(  
                             "水果产量图", // 图表标题 
                             "水果", // 目录轴的显示标签 
@@ -41,7 +41,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
                              
          FileOutputStream fos_jpg = null;  
          try {  
-             fos_jpg = new FileOutputStream("/home/suhang/git/CSE360_Project/Health_Tracker/img/LineChart.jpg");  
+             fos_jpg = new FileOutputStream("/home/suhang/git/CSE360_Project/Health_Tracker/img/Histogram.jpg");  
              ChartUtilities.writeChartAsJPEG(fos_jpg,chart,400,300);  
          } finally {  
              try {  
