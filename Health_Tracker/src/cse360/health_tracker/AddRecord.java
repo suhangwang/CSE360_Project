@@ -1,7 +1,6 @@
 package cse360.health_tracker;
 
 
-import java.awt.EventQueue;
 import java.awt.Image;
 
 import javax.swing.JFrame;
@@ -264,11 +263,13 @@ public class AddRecord extends JFrame {
 				// put the data into database
 				if(errorExist==false)
 				{
-					Calendar c = Calendar.getInstance();
+					/*Calendar c = Calendar.getInstance();
 					c.setTime(new Date());
 					String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DATE);
-					System.out.println(date);
-					MySQLDB.addNewPhysicalActivityRecord(username1, password1, date, cardioDou, strengthDou, workDou, sleepDou, recreationDou);
+					System.out.println(date);*/
+					Date time= new java.sql.Date(new java.util.Date().getTime());
+					System.out.println(time);
+					MySQLDB.addNewPhysicalActivityRecord(username1, password1, time.toString(), cardioDou, strengthDou, workDou, sleepDou, recreationDou);
 				}
 			}
 		});
@@ -333,11 +334,13 @@ public class AddRecord extends JFrame {
 				}
 				if(errorExist==false)
 				{
-					Calendar c = Calendar.getInstance();
+					/*Calendar c = Calendar.getInstance();
 					c.setTime(new Date());
 					String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DATE);
-					System.out.println(date);
-					MySQLDB.addNewHealthIndicatorRecord(username1, password1, date, pressureDou, sugerDou, rateDou, temperatureDou, weightDou);
+					System.out.println(date);*/
+					Date time= new java.sql.Date(new java.util.Date().getTime());
+					System.out.println(time);
+					MySQLDB.addNewHealthIndicatorRecord(username1, password1, time.toString(), pressureDou, sugerDou, rateDou, temperatureDou, weightDou);
 				}
 			}
 		});

@@ -1,0 +1,29 @@
+% login as root
+mysql -u root -p
+
+% login as user
+mysql -u testuser -p
+
+% create database
+create database cse360db;
+
+% show databases
+show databases
+
+% use databases
+use cse360db
+
+% create user
+create user testuser identified by 'testuser'
+
+% grant cse360db to testuser
+grant all privileges on cse360db.* to testuser identified by 'testuser'
+
+% create table
+create table userInfo(username varchar(255), password varchar(255), question int, answer varchar(255));
+create table physicalActivity(username varchar(255), password varchar(255), date date, cardio double, strength double, work double, sleep double, recreation double, primary key(username, date));
+create table healthIndicator(username varchar(255), password varchar(255), date date, pressure double, suger double, rate double, temperature double, weight double, primary key(username, date));
+
+% import data from a file
+mysqlimport db_name table_name.txt
+-d % delete the previous data before importing the new data
