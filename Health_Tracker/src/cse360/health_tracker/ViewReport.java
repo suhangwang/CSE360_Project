@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -17,6 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ViewReport {
 
@@ -109,6 +112,28 @@ public class ViewReport {
 		frmViewReport.getContentPane().add(txtrnMonthlynHistogram);
 		
 		btnPrintToPdf = new JButton("Print to pdf");
+		btnPrintToPdf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0){
+				ArrayList<String> imageUrllist = new ArrayList<String>();  
+		        imageUrllist.add(dir + "/img/LineChart.png");
+		        imageUrllist.add(dir + "/img/Histogram.png");
+		        String pdfUrl = dir + "/img/report.pdf";  
+		        File file = PdfManager.Pdf(imageUrllist, pdfUrl);  
+		        try {  
+		            file.createNewFile();  
+		        } catch (IOException e) {  
+		            // TODO Auto-generated catch block  
+		            e.printStackTrace();  
+		        }  
+		        File file_pdf = new File(dir + "/img/report.pdf"); 
+		        try {
+					java.awt.Desktop.getDesktop().open(file_pdf);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		btnPrintToPdf.setBounds(686, 603, 117, 25);
 		frmViewReport.getContentPane().add(btnPrintToPdf);
 		
