@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollBar;
 
 public class ViewReport {
 
@@ -28,6 +29,7 @@ public class ViewReport {
 	private JTextArea txtrnMonthlynHistogram;
 	private JButton btnPrintToPdf;
 	private JButton btnPrintToPrinter;
+	private JLabel lblHealthHist;
 
 	/**
 	 * Launch the application.
@@ -36,7 +38,7 @@ public class ViewReport {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ViewReport window = new ViewReport();
+					ViewReport window = new ViewReport("admin");
 					window.frmViewReport.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,21 +51,20 @@ public class ViewReport {
 	 * Create the application.
 	 * @throws IOException 
 	 */
-	public ViewReport() throws IOException {
-		initialize();
+	public ViewReport(final String username) throws IOException {
+		initialize(username);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 * @throws IOException 
 	 */
-	private void initialize() throws IOException {
+	private void initialize(final String username) throws IOException {
 		frmViewReport = new JFrame();
 		frmViewReport.getContentPane().setBackground(new Color(245, 245, 220));
 		frmViewReport.setResizable(false);
 		frmViewReport.setTitle("View Report");
-		frmViewReport.setBounds(100, 100, 900, 720);
-		frmViewReport.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmViewReport.setBounds(100, 100, 1500, 720);
 		frmViewReport.getContentPane().setLayout(null);
 		
 		// generate the figures
@@ -73,7 +74,7 @@ public class ViewReport {
 		lblLineChart.setBounds(0, 0, 600, frmViewReport.getHeight()/2);
 		File directory = new File(".");
 		final String dir = directory.getCanonicalPath();
-		ImageIcon iconLine = new ImageIcon(dir+"/img/LineChart.png");
+		ImageIcon iconLine = new ImageIcon(dir+"/img/LineChart_physical.png");
 		Image tempLine = iconLine.getImage().getScaledInstance(lblLineChart.getWidth(), lblLineChart.getHeight(), iconLine.getImage().SCALE_DEFAULT);
 		iconLine = new ImageIcon(tempLine);
 		lblLineChart.setIcon(iconLine);
@@ -81,7 +82,7 @@ public class ViewReport {
 		
 		JLabel lblHistogram = new JLabel("New label");
 		lblHistogram.setBounds(0, frmViewReport.getHeight()/2, 600, frmViewReport.getHeight()/2);
-		ImageIcon iconHistogram = new ImageIcon(dir+"/img/Histogram.png");
+		ImageIcon iconHistogram = new ImageIcon(dir+"/img/Histogram_physical.png");
 		Image tempHistogram = iconHistogram.getImage().getScaledInstance(lblHistogram.getWidth(), lblHistogram.getHeight(), iconHistogram.getImage().SCALE_DEFAULT);
 		iconHistogram = new ImageIcon(tempHistogram);
 		lblHistogram.setIcon(iconHistogram);
@@ -94,7 +95,7 @@ public class ViewReport {
 		txtMonthly.setForeground(Color.RED);
 		txtMonthly.setEditable(false);
 		txtMonthly.setText("\n       Montly \n    LineChart");
-		txtMonthly.setBounds(lblLineChart.getWidth(), 0, frmViewReport.getWidth()-lblLineChart.getWidth(), 200);
+		txtMonthly.setBounds(lblLineChart.getWidth(), 0, 300, 200);
 		frmViewReport.getContentPane().add(txtMonthly);
 		txtMonthly.setColumns(10);
 		
@@ -108,17 +109,35 @@ public class ViewReport {
 		txtrnMonthlynHistogram.setForeground(new Color(255, 0, 0));
 		txtrnMonthlynHistogram.setText("\n      Monthly\n     Histogram");
 		txtrnMonthlynHistogram.setEditable(false);
-		txtrnMonthlynHistogram.setBounds(lblLineChart.getWidth(), frmViewReport.getHeight()/2, frmViewReport.getWidth()-lblLineChart.getWidth(), 200);
+		txtrnMonthlynHistogram.setBounds(lblLineChart.getWidth(), frmViewReport.getHeight()/2, 300, 200);
 		frmViewReport.getContentPane().add(txtrnMonthlynHistogram);
+		
+		JLabel lblHealthLine = new JLabel("New label");
+		lblHealthLine.setBounds(lblLineChart.getWidth()+txtMonthly.getWidth(), 0, 600, frmViewReport.getHeight()/2);
+		ImageIcon iconHealthLine = new ImageIcon(dir+"/img/LineChart_health.png");
+		Image tempHealthLine = iconHealthLine.getImage().getScaledInstance(lblHealthLine.getWidth(), lblHealthLine.getHeight(), iconHealthLine.getImage().SCALE_DEFAULT);
+		iconHealthLine = new ImageIcon(tempHealthLine);
+		lblHealthLine.setIcon(iconHealthLine);
+		frmViewReport.getContentPane().add(lblHealthLine);
+		
+		lblHealthHist = new JLabel("New label");
+		lblHealthHist.setBounds(lblLineChart.getWidth()+txtMonthly.getWidth(), frmViewReport.getHeight()/2, 600, frmViewReport.getHeight()/2);
+		ImageIcon iconHealthHist = new ImageIcon(dir+"/img/Histogram_health.png");
+		Image tempHealthHist = iconHealthHist.getImage().getScaledInstance(lblHealthLine.getWidth(), lblHealthLine.getHeight(), iconHealthHist.getImage().SCALE_DEFAULT);
+		iconHealthHist = new ImageIcon(tempHealthHist);
+		lblHealthHist.setIcon(iconHealthHist);
+		frmViewReport.getContentPane().add(lblHealthHist);
 		
 		btnPrintToPdf = new JButton("Print to pdf");
 		btnPrintToPdf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
 				ArrayList<String> imageUrllist = new ArrayList<String>();  
-		        imageUrllist.add(dir + "/img/LineChart.png");
-		        imageUrllist.add(dir + "/img/Histogram.png");
-		        String pdfUrl = dir + "/img/report.pdf";  
-		        File file = PdfManager.Pdf(imageUrllist, pdfUrl);  
+		        imageUrllist.add(dir + "/img/LineChart_physical.png");
+		        imageUrllist.add(dir + "/img/Histogram_physical.png");
+		        imageUrllist.add(dir + "/img/LineChart_health.png");
+		        imageUrllist.add(dir + "/img/Histogram_health.png");
+		        String pdfUrl = dir + "/img/report.pdf"; 
+		        File file = PdfManager.Pdf(imageUrllist, pdfUrl, username);  
 		        try {  
 		            file.createNewFile();  
 		        } catch (IOException e) {  
@@ -144,5 +163,6 @@ public class ViewReport {
 		JButton btnSwitchToWeekly_1 = new JButton("Switch to Weekly");
 		btnSwitchToWeekly_1.setBounds(677, 273, 117, 25);
 		frmViewReport.getContentPane().add(btnSwitchToWeekly_1);
+		frmViewReport.setVisible(true);
 	}
 }

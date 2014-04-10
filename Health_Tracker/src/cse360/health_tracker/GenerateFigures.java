@@ -43,23 +43,29 @@ public class GenerateFigures {
 
 	public static void generateFigures() throws IOException
 	{
-		GraphicalDataType data = MySQLDB.retrieveRecord_new("admin", "admin");
+		GraphicalDataType data = MySQLDB.retrieveRecord_Physical("admin", "admin");
+		GraphicalDataType data_health = MySQLDB.retrieveRecord_Health("admin", "admin");
 		// create line chart and histogram
 		JFreeChart lineChart = createChart(data.getLineDataset());
 		JFreeChart histChart = createHistChart(data.getHistDataset());
+		JFreeChart lineChart_Health = createChart_Health(data_health.getLineDataset());
+		JFreeChart histChart_Health = createHistChart_Health(data_health.getHistDataset());
+		
 		// save image as file
 		File directory = new File(".");
 		final String dir = directory.getCanonicalPath();
-		saveAsFile(lineChart, dir+"/img/LineChart.png", 600, 360);
-		saveAsFile(histChart, dir+"/img/Histogram.png", 600, 360);
+		saveAsFile(lineChart, dir+"/img/LineChart_physical.png", 600, 360);
+		saveAsFile(histChart, dir+"/img/Histogram_physical.png", 600, 360);
+		saveAsFile(lineChart_Health, dir+"/img/LineChart_health.png", 600, 360);
+		saveAsFile(histChart_Health, dir+"/img/Histogram_health.png", 600, 360);
 	}
 	
-	public static JFreeChart lineChart(TimeSeriesCollection lineDataset)
+	/*public static JFreeChart lineChart(TimeSeriesCollection lineDataset)
 	{
 		JFreeChart lineChart = ChartFactory.createTimeSeriesChart(null, null, null, lineDataset);
 		lineChart.setBackgroundPaint(Color.white);
 		return lineChart;
-	}
+	}*/
 	
 	public static JFreeChart createHistChart(CategoryDataset histDataset)
 	{
@@ -77,6 +83,26 @@ public class GenerateFigures {
                            "Histogram", // title
                            "physical activity", // category
                            "Hours", // y label 
+                            histDataset, // dataset 
+                            PlotOrientation.VERTICAL, // figure direction: horizontal or vertical
+                            true,  // legend
+                            false, // tooltips
+                            false  // URLs
+                            );  
+        return chart;
+	}
+	
+	public static JFreeChart createHistChart_Health(CategoryDataset histDataset)
+	{
+        StandardChartTheme standardChartTheme=new StandardChartTheme("CN");          
+        standardChartTheme.setExtraLargeFont(new Font("隶书",Font.BOLD,12));      
+        standardChartTheme.setRegularFont(new Font("宋书",Font.PLAIN,10));      
+        standardChartTheme.setLargeFont(new Font("宋书",Font.PLAIN,10));      
+        ChartFactory.setChartTheme(standardChartTheme);  
+        JFreeChart chart = ChartFactory.createBarChart3D(  
+                           "Health Indicator Histogram", // title
+                           "health indicator", // category
+                           "", // y label 
                             histDataset, // dataset 
                             PlotOrientation.VERTICAL, // figure direction: horizontal or vertical
                             true,  // legend
@@ -143,6 +169,61 @@ public class GenerateFigures {
 		return jfreechart;
 	}
 
+	
+	public static JFreeChart createChart_Health(TimeSeriesCollection lineDataset) {
+		JFreeChart jfreechart = ChartFactory.createTimeSeriesChart(
+				"Health Indicator Linechart", 		// title
+				"Time", 		// categoryAxisLabel
+				"", 	// valueAxisLabel
+				lineDataset,// dataset
+				true, 		// legend
+				true, 		// tooltips
+				false); 		// URLs300, 300
+
+		Font xfont = new Font("宋体", Font.PLAIN, 12); // X轴
+		Font yfont = new Font("宋体", Font.PLAIN, 12); // Y轴
+		Font kfont = new Font("宋体", Font.PLAIN, 10); // 底部
+		Font titleFont = new Font("隶书", Font.BOLD, 12); // 图片标题
+
+		jfreechart.setBackgroundPaint(Color.white);
+		XYPlot xyplot = (XYPlot) jfreechart.getPlot(); // 获得 plot：XYPlot！
+
+		xyplot.getDomainAxis().setLabelFont(xfont);
+		xyplot.getRangeAxis().setLabelFont(yfont);
+		jfreechart.getLegend().setItemFont(kfont);
+		jfreechart.getTitle().setFont(titleFont);
+
+		//设置时间格式，同时也解决了乱码问题
+		DateAxis dateaxis = (DateAxis)xyplot.getDomainAxis();
+		SimpleDateFormat sfd = new SimpleDateFormat("yy-MM");
+		dateaxis.setDateFormatOverride(sfd);
+		xyplot.setDomainAxis(dateaxis);
+
+		// 以下的设置可以由用户定制，也可以省略
+		XYPlot plot = (XYPlot) jfreechart.getPlot();
+		XYLineAndShapeRenderer xylineandshaperenderer = (XYLineAndShapeRenderer) plot.getRenderer();
+		// 设置网格背景颜色
+		plot.setBackgroundPaint(Color.white);
+		// 设置网格竖线颜色
+		plot.setDomainGridlinePaint(Color.pink);
+		// 设置网格横线颜色
+		plot.setRangeGridlinePaint(Color.pink);
+		// 设置曲线图与xy轴的距离
+		plot.setAxisOffset(new RectangleInsets(0D, 0D, 0D, 10D));
+		// 设置曲线是否显示数据点
+		xylineandshaperenderer.setBaseShapesVisible(true);
+		// 设置曲线显示各数据点的值
+		XYItemRenderer xyitem = plot.getRenderer();
+		xyitem.setBaseItemLabelsVisible(true);
+		xyitem.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+				ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
+		xyitem.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator());
+		xyitem.setBaseItemLabelFont(new Font("Dialog", 1, 14));
+		plot.setRenderer(xyitem);
+
+		return jfreechart;
+	}
+	
 	// 保存为文件
 	public static void saveAsFile(JFreeChart chart, String outputPath,
 			int width, int height) {

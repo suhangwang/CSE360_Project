@@ -211,7 +211,7 @@ public class MySQLDB {
 		return lineDataset;
 	}
 	
-	public static GraphicalDataType retrieveRecord_new(String username, String password)
+	public static GraphicalDataType retrieveRecord_Physical(String username, String password)
 	{
 		GraphicalDataType graphicalData = new GraphicalDataType();
 		try{
@@ -291,6 +291,96 @@ public class MySQLDB {
 			graphicalData.addLineChartTimeSeries(workSeries);
 			graphicalData.addLineChartTimeSeries(sleepSeries);
 			graphicalData.addLineChartTimeSeries(recreationSeries);
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return graphicalData;
+	}
+	
+	
+	public static GraphicalDataType retrieveRecord_Health(String username, String password)
+	{
+		GraphicalDataType graphicalData = new GraphicalDataType();
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String queryPhysical = "select * from healthIndicator where username = \"" + username + "\" and password = \"" + 
+									password + "\" order by date asc";
+			rs = st.executeQuery(queryPhysical);
+			
+			TimeSeries pressureSeries = new TimeSeries("blood pressure");
+			TimeSeries sugarSeries = new TimeSeries("blood sugar");
+			TimeSeries pulseSeries = new TimeSeries("pulse rate");
+			TimeSeries temperatureSeries = new TimeSeries("body temperature");
+			TimeSeries weightSeries = new TimeSeries("weight");
+			
+			int year = 0, month = 0, curYear, curMonth, count = 0;
+			double pressure = 0, sugar = 0, pulse = 0, temperature = 0, weight = 0;
+			boolean firstTime = true;
+			while(rs.next())
+			{
+				/*Date date = rs.getDate(3);
+				curYear = date.getYear();
+				curMonth = date.getMonth();*/
+				String date1 = rs.getString(3);
+				String sp[] = date1.split("-");
+				curYear = Integer.parseInt(sp[0]);
+				curMonth = Integer.parseInt(sp[1]);
+				System.out.println(curYear+" "+curMonth);
+				if(year!=curYear || month!=curMonth)
+				{
+					if(firstTime == false)
+					{
+						System.out.println(new Month(month, year));
+						pressureSeries.add(new Month(month, year), pressure/count);
+						sugarSeries.add(new Month(month, year), sugar/count);
+						pulseSeries.add(new Month(month, year), pulse/count);
+						temperatureSeries.add(new Month(month, year), temperature/count);
+						weightSeries.add(new Month(month, year), weight/count);
+						graphicalData.addCategory(pressure/count, new Month(month, year), "blood pressure");
+						graphicalData.addCategory(sugar/count, new Month(month, year), "blood sugar");
+						graphicalData.addCategory(pulse/count, new Month(month, year), "pulse rate");
+						graphicalData.addCategory(temperature/count, new Month(month, year), "body temperature");
+						graphicalData.addCategory(weight/count, new Month(month, year), "weight");
+						//graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+					}
+					count = 0;
+					pressure = 0;
+					sugar = 0;
+					pulse = 0;
+					temperature = 0;
+					weight = 0;
+					year = curYear;
+					month = curMonth;
+					firstTime = false;
+				}
+				count = count + 1;
+				pressure = pressure + rs.getDouble(4);
+				sugar = sugar + rs.getDouble(5);
+				pulse = pulse + rs.getDouble(6);
+				temperature = temperature + rs.getDouble(7);
+				weight = weight + rs.getDouble(8);
+			}
+			System.out.println(month);
+			System.out.println(new Month(month, year));
+			pressureSeries.add(new Month(month, year), pressure/count);
+			sugarSeries.add(new Month(month, year), sugar/count);
+			pulseSeries.add(new Month(month, year), pulse/count);
+			temperatureSeries.add(new Month(month, year), temperature/count);
+			weightSeries.add(new Month(month, year), weight/count);
+			graphicalData.addCategory(pressure/count, new Month(month, year), "blood pressure");
+			graphicalData.addCategory(sugar/count, new Month(month, year), "blood sugar");
+			graphicalData.addCategory(pulse/count, new Month(month, year), "pulse rate");
+			graphicalData.addCategory(temperature/count, new Month(month, year), "body temperature");
+			graphicalData.addCategory(weight/count, new Month(month, year), "weight");
+			
+			graphicalData.addLineChartTimeSeries(pressureSeries);
+			graphicalData.addLineChartTimeSeries(sugarSeries);
+			graphicalData.addLineChartTimeSeries(pulseSeries);
+			graphicalData.addLineChartTimeSeries(temperatureSeries);
+			graphicalData.addLineChartTimeSeries(weightSeries);
 		}catch(SQLException e)
 		{
 			e.printStackTrace();

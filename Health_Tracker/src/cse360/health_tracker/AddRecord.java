@@ -70,7 +70,7 @@ public class AddRecord extends JFrame {
 	 * Create the frame.
 	 * @throws IOException 
 	 */
-	public AddRecord(String username, String password) throws IOException {
+	public AddRecord(final String username, String password) throws IOException {
 		username1 = username;
 		password1 = password;
 		setResizable(false);
@@ -434,6 +434,11 @@ public class AddRecord extends JFrame {
 		menuBar.add(mnRecords);
 		
 		JMenuItem mntmAddRecord = new JMenuItem("Add Record");
+		mntmAddRecord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO: add record
+			}
+		});
 		mnRecords.add(mntmAddRecord);
 		
 		JMenuItem mntmModifyRecord = new JMenuItem("Modify Record");
@@ -446,6 +451,16 @@ public class AddRecord extends JFrame {
 		mnView.add(rdbtnmntmWeekly);
 		
 		JRadioButtonMenuItem rdbtnmntmMonthly = new JRadioButtonMenuItem("Monthly");
+		rdbtnmntmMonthly.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+						try {
+							ViewReport window = new ViewReport(username);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+			}
+		});
 		mnView.add(rdbtnmntmMonthly);
 		
 		JRadioButtonMenuItem rdbtnmntmNewRadioItem = new JRadioButtonMenuItem("Table");

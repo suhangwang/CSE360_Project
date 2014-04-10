@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;  
   
   
+
+
 import com.itextpdf.text.Document;  
 import com.itextpdf.text.DocumentException;  
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;  
 import com.itextpdf.text.PageSize;  
 import com.itextpdf.text.Paragraph;  
@@ -21,10 +25,12 @@ public class PdfManager {
         ArrayList<String> imageUrllist = new ArrayList<String>();  
         File directory = new File(".");
 		final String dir = directory.getCanonicalPath();
-        imageUrllist.add(dir + "/img/LineChart.png");
-        imageUrllist.add(dir + "/img/Histogram.png");
+        imageUrllist.add(dir + "/img/LineChart_physical.png");
+        imageUrllist.add(dir + "/img/Histogram_physical.png");
+        imageUrllist.add(dir + "/img/LineChart_health.png");
+        imageUrllist.add(dir + "/img/Histogram_health.png");
         String pdfUrl = dir + "/img/report.pdf";  
-        File file = PdfManager.Pdf(imageUrllist, pdfUrl);  
+        File file = PdfManager.Pdf(imageUrllist, pdfUrl, "admin");  
         try {  
             file.createNewFile();  
         } catch (IOException e) {  
@@ -33,16 +39,21 @@ public class PdfManager {
         }  
 	}  
 	
-    public static File Pdf(ArrayList<String> imageUrllist,String mOutputPdfFileName) {  
+    public static File Pdf(ArrayList<String> imageUrllist,String mOutputPdfFileName, String username) {  
         String TAG = "PdfManager";  
         Document doc = new Document(PageSize.A4, 20, 20, 20, 20);  
         try {  
             PdfWriter.getInstance(doc, new FileOutputStream(mOutputPdfFileName));  
             doc.open();  
             doc.newPage();  
+            Paragraph t = new Paragraph("Monthly Report for " + username);
+            t.setAlignment(Element.ALIGN_CENTER);
+            Font largeBold = new Font(Font.FontFamily.COURIER, 32,
+                    Font.BOLD);
+            t.setFont(largeBold);
+            doc.add(t);  
             for (int i = 0; i < imageUrllist.size(); i++) {  
                 //doc.newPage();  
-                doc.add(new Paragraph("简单使用iText"));  
                 Image png1 = Image.getInstance(imageUrllist.get(i));  
                 float heigth = png1.getHeight();  
                 float width = png1.getWidth();  
