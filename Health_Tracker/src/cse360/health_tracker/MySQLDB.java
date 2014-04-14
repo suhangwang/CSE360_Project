@@ -65,12 +65,49 @@ public class MySQLDB {
 				valid = true;
 			else
 				valid = false;
+			rs.close();
 			con.close();
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
 		return valid;	
+	}
+	
+	public static String getQuestionInd(String username)
+	{
+		String result = null;
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String query = "select * from userInfo where username = \""+ username + "\";";
+			System.out.println(query);
+			rs = st.executeQuery(query);
+			if(rs.next())
+				result = rs.getInt(3)+rs.getString(4);
+			rs.close();
+			con.close();
+			return result;
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void changePassword(String username, String password)
+	{
+		try{
+			con = DriverManager.getConnection(url, dbuser, dbpassword);
+			st = (Statement) con.createStatement();
+			String query = "update userInfo set password = '" + password +"' where username = '" + username +"';";
+			System.out.println(query);
+			st.executeUpdate(query);
+			con.close();
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public static boolean addNewUserInfo(String username, String password, int questionInd, String answer)

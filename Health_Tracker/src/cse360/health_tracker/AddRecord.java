@@ -428,6 +428,11 @@ public class AddRecord extends JFrame {
 		mnFile.add(mntmSave);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		mnFile.add(mntmExit);
 		
 		JMenu mnRecords = new JMenu("Records");

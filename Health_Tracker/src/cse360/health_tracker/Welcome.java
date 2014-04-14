@@ -199,6 +199,7 @@ public class Welcome {
 			public void actionPerformed(ActionEvent e) {
 				// call GetPwdBack
 				// TODO
+				new ForgetPassword();
 			}
 		});
 		btnHelp.setBounds(lblNewLabel.getWidth()+160+lblUsername.getWidth(), 328, 90, 20);
