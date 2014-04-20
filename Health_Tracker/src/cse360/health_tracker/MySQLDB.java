@@ -147,6 +147,7 @@ public class MySQLDB {
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -167,6 +168,7 @@ public class MySQLDB {
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -251,6 +253,7 @@ public class MySQLDB {
 	public static GraphicalDataType retrieveRecord_Physical(String username, String password)
 	{
 		GraphicalDataType graphicalData = new GraphicalDataType();
+		graphicalData.setTableColumnName(new Object[]{"month","cardio","strength","work","sleep","recreation"});
 		try{
 			con = DriverManager.getConnection(url, dbuser, dbpassword);
 			st = (Statement) con.createStatement();
@@ -293,6 +296,8 @@ public class MySQLDB {
 						graphicalData.addCategory(sleep/count, new Month(month, year), "sleep");
 						graphicalData.addCategory(recreation/count, new Month(month, year), "recreation");
 						//graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+						graphicalData.addTableRow(new Object[]{new Month(month, year), cardio/count,
+								strength/count, work/count, sleep/count, recreation/count});
 					}
 					count = 0;
 					cardio = 0;
@@ -328,6 +333,8 @@ public class MySQLDB {
 			graphicalData.addLineChartTimeSeries(workSeries);
 			graphicalData.addLineChartTimeSeries(sleepSeries);
 			graphicalData.addLineChartTimeSeries(recreationSeries);
+			graphicalData.addTableRow(new Object[]{new Month(month, year), cardio/count,
+					strength/count, work/count, sleep/count, recreation/count});
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
@@ -340,6 +347,7 @@ public class MySQLDB {
 	public static GraphicalDataType retrieveRecord_Health(String username, String password)
 	{
 		GraphicalDataType graphicalData = new GraphicalDataType();
+		graphicalData.setTableColumnName(new Object[]{"month", "blood pressure","blood sugar","pulse rate","body temperature","weight"});
 		try{
 			con = DriverManager.getConnection(url, dbuser, dbpassword);
 			st = (Statement) con.createStatement();
@@ -382,6 +390,8 @@ public class MySQLDB {
 						graphicalData.addCategory(temperature/count, new Month(month, year), "body temperature");
 						graphicalData.addCategory(weight/count, new Month(month, year), "weight");
 						//graphicalData.addCategory(cardio/count, new Month(month, year), "cardio");
+						graphicalData.addTableRow(new Object[]{new Month(month, year), 
+								pressure/count, sugar/count, pulse/count, temperature/count, weight/count});
 					}
 					count = 0;
 					pressure = 0;
@@ -418,6 +428,8 @@ public class MySQLDB {
 			graphicalData.addLineChartTimeSeries(pulseSeries);
 			graphicalData.addLineChartTimeSeries(temperatureSeries);
 			graphicalData.addLineChartTimeSeries(weightSeries);
+			graphicalData.addTableRow(new Object[]{new Month(month, year), 
+					pressure/count, sugar/count, pulse/count, temperature/count, weight/count});
 		}catch(SQLException e)
 		{
 			e.printStackTrace();

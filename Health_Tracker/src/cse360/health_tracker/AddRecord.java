@@ -49,6 +49,8 @@ public class AddRecord extends JFrame {
 	private JLabel txtrHour, txtrHour_1, txtrHour_2, txtrHour_3, txtrHour_4;
 	private JLabel txtrMmhg, txtrMgdl, txtrBpm, txtrF, txtrLb;
 	private String username1, password1;
+	private JLabel lblPhySucc;
+	private JLabel lblHealSucc;
 
 	/**
 	 * Launch the application.
@@ -143,6 +145,17 @@ public class AddRecord extends JFrame {
 		contentPane.add(txtEnterHere_9);
 		
 		JButton btnNewButton = new JButton("Reset");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clearPhysical();
+				txtEnterHere.setText("Enter Here");
+				txtEnterHere_1.setText("Enter Here");
+				txtEnterHere_2.setText("Enter Here");
+				txtEnterHere_3.setText("Enter Here");
+				txtEnterHere_4.setText("Enter Here");
+				txtEnterHere_5.setText("Enter Here");
+			}
+		});
 		btnNewButton.setBounds(40, 357, 97, 25);
 		contentPane.add(btnNewButton);
 		
@@ -207,6 +220,17 @@ public class AddRecord extends JFrame {
 		txtrLb.setBounds(699, 322, 125, 22);
 		contentPane.add(txtrLb);
 		
+		lblPhySucc = new JLabel("add successful");
+		lblPhySucc.setForeground(SystemColor.red);
+		lblPhySucc.setBounds(150, 357, 120, 22);
+		lblPhySucc.setVisible(false);
+		contentPane.add(lblPhySucc);
+		
+		lblHealSucc = new JLabel("add successfil");
+		lblHealSucc.setForeground(SystemColor.red);
+		lblHealSucc.setBounds(580, 357, 120, 22);
+		lblHealSucc.setVisible(true);
+		contentPane.add(lblHealSucc);
 		
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(new ActionListener() {
@@ -269,7 +293,13 @@ public class AddRecord extends JFrame {
 					System.out.println(date);*/
 					Date time= new java.sql.Date(new java.util.Date().getTime());
 					System.out.println(time);
-					MySQLDB.addNewPhysicalActivityRecord(username1, password1, time.toString(), cardioDou, strengthDou, workDou, sleepDou, recreationDou);
+					clearPhysical();
+					boolean added = MySQLDB.addNewPhysicalActivityRecord(username1, password1, time.toString(), cardioDou, strengthDou, workDou, sleepDou, recreationDou);
+					if(added)
+						lblPhySucc.setText("add successful");
+					else
+						lblPhySucc.setText("already exist");
+					lblPhySucc.setVisible(true);
 				}
 			}
 		});
@@ -277,17 +307,27 @@ public class AddRecord extends JFrame {
 		contentPane.add(btnSubmit);
 		
 		JButton btnReset = new JButton("Reset");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearHealth();
+				txtEnterHere_5.setText("Enter Here");
+				txtEnterHere_6.setText("Enter Here");
+				txtEnterHere_7.setText("Enter Here");
+				txtEnterHere_8.setText("Enter Here");
+				txtEnterHere_9.setText("Enter Here");
+			}
+		});
 		btnReset.setBounds(462, 357, 97, 25);
 		contentPane.add(btnReset);
 		
 		JButton btnSubmit_1 = new JButton("Submit");
 		btnSubmit_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String pressure = txtrMmhg.getText();
-				String suger = txtrMgdl.getText();
-				String rate = txtrBpm.getText();
-				String temperature = txtrF.getText();
-				String weight = txtrLb.getText();
+				String pressure = txtEnterHere_5.getText();
+				String suger = txtEnterHere_6.getText();
+				String rate = txtEnterHere_7.getText();
+				String temperature = txtEnterHere_8.getText();
+				String weight = txtEnterHere_9.getText();
 				double pressureDou=0, sugerDou=0, rateDou=0, temperatureDou=0, weightDou=0;
 				
 				boolean errorExist = false;
@@ -338,9 +378,15 @@ public class AddRecord extends JFrame {
 					c.setTime(new Date());
 					String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DATE);
 					System.out.println(date);*/
+					clearHealth();
 					Date time= new java.sql.Date(new java.util.Date().getTime());
 					System.out.println(time);
-					MySQLDB.addNewHealthIndicatorRecord(username1, password1, time.toString(), pressureDou, sugerDou, rateDou, temperatureDou, weightDou);
+					boolean added = MySQLDB.addNewHealthIndicatorRecord(username1, password1, time.toString(), pressureDou, sugerDou, rateDou, temperatureDou, weightDou);
+					if(added)
+						lblHealSucc.setText("add successful");
+					else
+						lblHealSucc.setText("already exist");
+					lblHealSucc.setVisible(true);
 				}
 			}
 		});
@@ -545,6 +591,34 @@ public class AddRecord extends JFrame {
 	    return false;  
 	  }  
 	  return true;  
+	}
+	
+	private void clearPhysical()
+	{
+		txtrHour.setText("Hour");
+		txtrHour.setForeground(SystemColor.black);
+		txtrHour_1.setText("Hour");
+		txtrHour_1.setForeground(SystemColor.black);
+		txtrHour_2.setText("Hour");
+		txtrHour_2.setForeground(SystemColor.black);
+		txtrHour_3.setText("Hour");
+		txtrHour_3.setForeground(SystemColor.black);
+		txtrHour_4.setText("Hour");
+		txtrHour_4.setForeground(SystemColor.black);
+	}
+	
+	private void clearHealth()
+	{
+		txtrMmhg.setText("mm/Hg");
+		txtrMmhg.setForeground(SystemColor.black);
+		txtrMgdl.setText("mg/dl");
+		txtrMgdl.setForeground(SystemColor.black);
+		txtrBpm.setText("BPM");
+		txtrBpm.setForeground(SystemColor.black);
+		txtrF.setText("F");
+		txtrF.setForeground(SystemColor.black);
+		txtrLb.setText("lb");
+		txtrLb.setForeground(SystemColor.black);
 	}
 }
 

@@ -1,12 +1,24 @@
 package cse360.health_tracker;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.JTableHeader;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -50,7 +62,7 @@ public class GenerateFigures {
 		JFreeChart histChart = createHistChart(data.getHistDataset());
 		JFreeChart lineChart_Health = createChart_Health(data_health.getLineDataset());
 		JFreeChart histChart_Health = createHistChart_Health(data_health.getHistDataset());
-		
+
 		// save image as file
 		File directory = new File(".");
 		final String dir = directory.getCanonicalPath();
@@ -58,6 +70,8 @@ public class GenerateFigures {
 		saveAsFile(histChart, dir+"/img/Histogram_physical.png", 600, 360);
 		saveAsFile(lineChart_Health, dir+"/img/LineChart_health.png", 600, 360);
 		saveAsFile(histChart_Health, dir+"/img/Histogram_health.png", 600, 360);
+		//createImage(data.getTable(), dir + "/img/table_physical.png");
+		//createImage(data_health.getTable(), dir + "/img/table_health.png");
 	}
 	
 	/*public static JFreeChart lineChart(TimeSeriesCollection lineDataset)
@@ -253,5 +267,44 @@ public class GenerateFigures {
 			}
 		}
 	}
+	
+	public static void createImage(JTable table, String fileName) throws IOException {
+		JFrame guiFrame = new JFrame();
+        
+        //make sure the program exits when the frame closes
+        guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        guiFrame.setTitle("Table Report");
+        guiFrame.setSize(600,360);
+      
+        //This will center the JFrame in the middle of the screen
+        guiFrame.setLocationRelativeTo(null);
+		
+		
+        table.setGridColor(Color.yellow);
+        table.setBackground(Color.magenta);
+        table.setAutoResizeMode(1);
+        table.setVisible(true);
+        table.setMinimumSize(new Dimension(600,360));
+        table.setRowHeight(0, 30);
+
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        
+        guiFrame.add(tableScrollPane);
+        guiFrame.setVisible(true);
+        
+        JTableHeader tableHeaderComp = table.getTableHeader();
+        int totalWidth = /*tableHeaderComp.getWidth() +*/ table.getWidth();
+        int totalHeight = tableHeaderComp.getHeight() + table.getHeight();
+        BufferedImage tableImage = new BufferedImage(totalWidth, totalHeight,
+            BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2D = (Graphics2D) tableImage.getGraphics();
+        tableHeaderComp.paint(g2D);
+        g2D.translate(0, tableHeaderComp.getHeight());
+        table.paint(g2D);
+        
+        File outputfile = new File(fileName);
+        ImageIO.write(tableImage, "png", outputfile);
+        guiFrame.setVisible(false);
+      }
 }
 

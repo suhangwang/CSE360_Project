@@ -30,7 +30,9 @@ public class ViewReport {
 	private JButton btnPrintToPdf;
 	private JButton btnPrintToPrinter;
 	private JLabel lblHealthHist;
-
+	private JLabel lblLineChart;
+	private JLabel lblHealthLine;
+	boolean current = true;
 	/**
 	 * Launch the application.
 	 */
@@ -70,7 +72,7 @@ public class ViewReport {
 		// generate the figures
 		GenerateFigures.generateFigures(); 
 		
-		JLabel lblLineChart = new JLabel("Line Chart");
+		lblLineChart = new JLabel("Line Chart");
 		lblLineChart.setBounds(0, 0, 600, frmViewReport.getHeight()/2);
 		File directory = new File(".");
 		final String dir = directory.getCanonicalPath();
@@ -94,14 +96,49 @@ public class ViewReport {
 		//txtMonthly.setHorizontalAlignment(SwingConstants.CENTER);
 		txtMonthly.setForeground(Color.RED);
 		txtMonthly.setEditable(false);
-		txtMonthly.setText("\n       Montly \n    LineChart");
+		txtMonthly.setText("\n       Monthly \n    LineChart");
 		txtMonthly.setBounds(lblLineChart.getWidth(), 0, 300, 200);
 		frmViewReport.getContentPane().add(txtMonthly);
 		txtMonthly.setColumns(10);
 		
-		JButton btnSwitchToWeekly = new JButton("Switch to Weekly");
-		btnSwitchToWeekly.setBounds(667, 236, 176, 25);
-		frmViewReport.getContentPane().add(btnSwitchToWeekly);
+		JButton btnTable = new JButton("Switch Foramt");
+		btnTable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(current == true)
+				{
+					current = false;
+					ImageIcon iconLine = new ImageIcon(dir+"/img/table_physical.png");
+					Image tempLine = iconLine.getImage();//.getScaledInstance(lblLineChart.getWidth(), lblLineChart.getHeight(), iconLine.getImage().SCALE_DEFAULT);
+					iconLine = new ImageIcon(tempLine);
+					lblLineChart.setIcon(iconLine);
+					
+					lblHealthLine.setBounds(lblLineChart.getWidth()+txtMonthly.getWidth(), 0, 600, frmViewReport.getHeight()/2);
+					ImageIcon iconHealthLine = new ImageIcon(dir+"/img/table_health.png");
+					Image tempHealthLine = iconHealthLine.getImage(); //.getScaledInstance(lblHealthLine.getWidth(), lblHealthLine.getHeight(), iconHealthLine.getImage().SCALE_DEFAULT);
+					iconHealthLine = new ImageIcon(tempHealthLine);
+					lblHealthLine.setIcon(iconHealthLine);
+					
+					txtMonthly.setText("\n       Monthly \n        Table");
+				}
+				else
+				{
+					current = true;
+					ImageIcon iconLine = new ImageIcon(dir+"/img/LineChart_physical.png");
+					Image tempLine = iconLine.getImage().getScaledInstance(lblLineChart.getWidth(), lblLineChart.getHeight(), iconLine.getImage().SCALE_DEFAULT);
+					iconLine = new ImageIcon(tempLine);
+					lblLineChart.setIcon(iconLine);
+					lblHealthLine.setBounds(lblLineChart.getWidth()+txtMonthly.getWidth(), 0, 600, frmViewReport.getHeight()/2);
+					ImageIcon iconHealthLine = new ImageIcon(dir+"/img/LineChart_health.png");
+					Image tempHealthLine = iconHealthLine.getImage().getScaledInstance(lblHealthLine.getWidth(), lblHealthLine.getHeight(), iconHealthLine.getImage().SCALE_DEFAULT);
+					iconHealthLine = new ImageIcon(tempHealthLine);
+					lblHealthLine.setIcon(iconHealthLine);
+					
+					txtMonthly.setText("\n       Monthly \n    LineChart");
+				}
+			}
+		});
+		btnTable.setBounds(667, 236, 176, 25);
+		frmViewReport.getContentPane().add(btnTable);
 		
 		txtrnMonthlynHistogram = new JTextArea();
 		txtrnMonthlynHistogram.setFont(new Font("Dialog", Font.PLAIN, 36));
@@ -112,7 +149,7 @@ public class ViewReport {
 		txtrnMonthlynHistogram.setBounds(lblLineChart.getWidth(), frmViewReport.getHeight()/2, 300, 200);
 		frmViewReport.getContentPane().add(txtrnMonthlynHistogram);
 		
-		JLabel lblHealthLine = new JLabel("New label");
+		lblHealthLine = new JLabel("New label");
 		lblHealthLine.setBounds(lblLineChart.getWidth()+txtMonthly.getWidth(), 0, 600, frmViewReport.getHeight()/2);
 		ImageIcon iconHealthLine = new ImageIcon(dir+"/img/LineChart_health.png");
 		Image tempHealthLine = iconHealthLine.getImage().getScaledInstance(lblHealthLine.getWidth(), lblHealthLine.getHeight(), iconHealthLine.getImage().SCALE_DEFAULT);
@@ -136,6 +173,8 @@ public class ViewReport {
 		        imageUrllist.add(dir + "/img/Histogram_physical.png");
 		        imageUrllist.add(dir + "/img/LineChart_health.png");
 		        imageUrllist.add(dir + "/img/Histogram_health.png");
+		        imageUrllist.add(dir + "/img/table_physical.png");
+		        imageUrllist.add(dir + "/img/table_health.png");
 		        String pdfUrl = dir + "/img/report.pdf"; 
 		        File file = PdfManager.Pdf(imageUrllist, pdfUrl, username);  
 		        try {  
@@ -159,10 +198,6 @@ public class ViewReport {
 		btnPrintToPrinter = new JButton("Print to printer");
 		btnPrintToPrinter.setBounds(674, 640, 147, 25);
 		frmViewReport.getContentPane().add(btnPrintToPrinter);
-		
-		JButton btnSwitchToWeekly_1 = new JButton("Switch to Weekly");
-		btnSwitchToWeekly_1.setBounds(677, 273, 117, 25);
-		frmViewReport.getContentPane().add(btnSwitchToWeekly_1);
 		frmViewReport.setVisible(true);
 	}
 }
