@@ -44,7 +44,7 @@ public class ErrorMessage {
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setAlwaysOnTop(true);
-		frame.setBounds(300, 300, errorMsg.length()*8+100, 30);
+		frame.setBounds(300, 300, errorMsg.length()*8+100, 40);
 		
 		JLabel errorImg = new JLabel("");
 		errorImg.setBounds(0, 0, frame.getHeight(), frame.getHeight());

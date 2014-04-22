@@ -34,7 +34,7 @@ import javax.swing.ImageIcon;
 //import java.sql.Date;
 
 public class AddRecord extends JFrame {
-
+	private JFrame frame;
 	private JPanel contentPane;
 	private JTextField txtEnterHere;
 	private JTextField txtEnterHere_2;
@@ -73,6 +73,7 @@ public class AddRecord extends JFrame {
 	 * @throws IOException 
 	 */
 	public AddRecord(final String username, String password) throws IOException {
+		frame = this;
 		username1 = username;
 		password1 = password;
 		setResizable(false);
@@ -229,7 +230,7 @@ public class AddRecord extends JFrame {
 		lblHealSucc = new JLabel("add successfil");
 		lblHealSucc.setForeground(SystemColor.red);
 		lblHealSucc.setBounds(580, 357, 120, 22);
-		lblHealSucc.setVisible(true);
+		lblHealSucc.setVisible(false);
 		contentPane.add(lblHealSucc);
 		
 		JButton btnSubmit = new JButton("Submit");
@@ -244,7 +245,7 @@ public class AddRecord extends JFrame {
 				// convert to integer
 				double cardioDou=0, strengthDou=0, workDou=0, sleepDou=0, recreationDou=0;
 				
-				if(isNumeric(cardio))
+				if(isNumeric(cardio) && Double.parseDouble(cardio) >=0 && Double.parseDouble(cardio) < 24)
 					cardioDou = Double.parseDouble(cardio);
 				else
 				{
@@ -252,7 +253,7 @@ public class AddRecord extends JFrame {
 					txtrHour.setForeground(SystemColor.red);
 					errorExist = true;
 				}
-				if(isNumeric(strength))
+				if(isNumeric(strength) && Double.parseDouble(strength) >=0 && Double.parseDouble(strength) < 24)
 					strengthDou = Double.parseDouble(strength);
 				else
 				{
@@ -260,7 +261,7 @@ public class AddRecord extends JFrame {
 					txtrHour_1.setForeground(SystemColor.red);
 					errorExist = true;
 				}
-				if(isNumeric(work))
+				if(isNumeric(work) && Double.parseDouble(work) >=0 && Double.parseDouble(work) < 24)
 					workDou = Double.parseDouble(work);
 				else
 				{
@@ -268,7 +269,7 @@ public class AddRecord extends JFrame {
 					txtrHour_2.setForeground(SystemColor.red);
 					errorExist = true;
 				}
-				if(isNumeric(sleep))
+				if(isNumeric(sleep) && Double.parseDouble(sleep) >=0 && Double.parseDouble(sleep) < 24)
 					sleepDou = Double.parseDouble(sleep);
 				else
 				{
@@ -276,12 +277,18 @@ public class AddRecord extends JFrame {
 					txtrHour_3.setForeground(SystemColor.red);
 					errorExist = true;
 				}
-				if(isNumeric(recreation))
+				if(isNumeric(recreation) && Double.parseDouble(recreation) >=0 && Double.parseDouble(recreation) < 24)
 					recreationDou = Double.parseDouble(recreation);
 				else
 				{
 					txtrHour_4.setText("Hour ! 0 to 24");
 					txtrHour_4.setForeground(SystemColor.red);
+					errorExist = true;
+				}
+				double totalHour = cardioDou + strengthDou + workDou + sleepDou + recreationDou;
+				if(!errorExist && totalHour>24)
+				{
+					new ErrorMessage("total hour should not be larger than 24");
 					errorExist = true;
 				}
 				// put the data into database
@@ -476,7 +483,7 @@ public class AddRecord extends JFrame {
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				frame.setVisible(false);
 			}
 		});
 		mnFile.add(mntmExit);
@@ -539,6 +546,13 @@ public class AddRecord extends JFrame {
 		mnPrint.add(mntmPrintToPrinter);
 		
 		JMenu mnHelp = new JMenu("Help");
+		JMenuItem mntmHelp = new JMenuItem("Help");
+		mntmHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new HelpInfo();
+			}
+		});
+		mnHelp.add(mntmHelp);
 		menuBar.add(mnHelp);
 		
 		JTextField txtrPhysicalActivity = new JTextField();
